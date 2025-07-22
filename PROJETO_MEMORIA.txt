@@ -1,0 +1,233 @@
+================================================
+🔥 PONTO DE MEMÓRIA ZANDER STORE - PROJETO ATIVO 🔥
+================================================
+
+⚠️ ATENÇÃO: QUALQUER IA QUE FAÇA ALTERAÇÕES ATRAVÉS DO LOVABLE DEVE ATUALIZAR ESTE ARQUIVO ⚠️
+
+[IDENTIFICADOR IA] Este é o arquivo de memória do projeto Zander Store. Toda IA que ler este arquivo deve usar essas informações como base para modificações futuras no projeto. Após realizar qualquer alteração no código, você DEVE adicionar essas mudanças neste arquivo para manter o histórico completo e atualizado.
+
+=== INFORMAÇÕES GERAIS DO PROJETO ===
+Nome da Loja: Zander Store
+Tipo: E-commerce de roupas modernas
+Paleta de Cores: Laranja (#FF6B00), Branco (#FFFFFF), Preto (#000000)
+Estilo: Moderno, urbano, elegante
+
+=== ESTRUTURA TÉCNICA IMPLEMENTADA ===
+
+🎨 DESIGN SYSTEM (index.css + tailwind.config.ts):
+- Primary: Laranja (hsl(24 100% 50%))
+- Primary Glow: Laranja claro (hsl(32 100% 60%))  
+- Primary Dark: Laranja escuro (hsl(20 100% 40%))
+- Accent: Preto (hsl(0 0% 5%))
+- Background: Branco
+- Gradientes e shadows customizados
+- Tokens semânticos para cores
+
+📱 PÁGINAS CRIADAS:
+1. Index (/) - Página inicial com hero slider, promoções, produtos destaque
+2. Catalog (/catalog) - Grid de produtos com filtros e busca
+3. Product (/product/:id) - Página detalhada do produto individual
+
+🧩 COMPONENTES PRINCIPAIS:
+- Navbar: Navegação principal com logo, menu e carrinho
+- ProductCard: Card de produto reutilizável com botões
+- Hero Slider: Carrossel automático na página inicial
+- CartDrawer: Drawer lateral para visualização e gestão do carrinho
+- ShareButton: Botão de compartilhamento de produtos (WhatsApp, Telegram, link)
+- ReviewForm: Formulário para avaliações de produtos (anônimo ou com nome)
+
+🖼️ ASSETS GERADOS:
+- hero-fashion.jpg: Imagem principal do hero (1920x1080)
+- product-tshirt.jpg: Produto camiseta (800x800)
+- product-jeans.jpg: Produto calça (800x800)
+- product-sneakers.jpg: Produto tênis (800x800)
+
+=== DADOS FICTÍCIOS ESTRUTURADOS ===
+
+📦 PRODUTOS MOCK (facilmente substituível por API):
+Estrutura padrão:
+{
+  id: string,
+  name: string,
+  price: number,
+  originalPrice?: number,
+  discount?: number,
+  image: string,
+  description: string,
+  isPromotion: boolean,
+  category: string,
+  sizes: string[],
+  colors: string[],
+  material?: string,
+  care?: string,
+  stock?: number
+}
+
+Produtos implementados:
+1. Camiseta Premium Laranja - R$ 79,90 (promocional)
+2. Calça Jeans Premium - R$ 149,90
+3. Tênis Casual Branco - R$ 199,90 (promocional)
+
+=== FUNCIONALIDADES IMPLEMENTADAS ===
+
+✅ NAVEGAÇÃO:
+- React Router configurado
+- Menu responsivo com mobile
+- Links funcionais entre páginas
+
+✅ PÁGINA INICIAL:
+- Hero slider com 3 slides automáticos
+- Seção de promoções com cards
+- Produtos em destaque
+- Seção de conjuntos
+- Footer completo
+
+✅ CATÁLOGO:
+- Grid responsivo de produtos
+- Sistema de filtros (categoria, busca, ordenação)
+- Cards de produto com botões funcionais
+- Layout adaptativo mobile/desktop
+
+✅ PRODUTO INDIVIDUAL:
+- Galeria de imagens
+- Seleção de tamanho e cor
+- Controle de quantidade
+- Abas de informações (descrição, especificações, avaliações)
+- Botões de ação (carrinho, favoritos, compartilhar)
+- Sistema de toast para feedback
+
+✅ DESIGN RESPONSIVO:
+- Mobile-first approach
+- Breakpoints configurados
+- Componentes adaptativos
+
+=== FUNCIONALIDADES IMPLEMENTADAS RECENTEMENTE ===
+
+✅ PÁGINAS EXPANDIDAS:
+- Página de Promoções (/promotions) - Grid de produtos em oferta com filtros
+- Página de Conjuntos (/sets) - Looks completos com desconto por conjunto
+- Painel Administrativo (/admin) - Dashboard completo para gestão
+
+✅ SISTEMA DE CARRINHO:
+- Drawer lateral moderno para visualização do carrinho
+- Gerenciamento de quantidades e remoção de itens
+- Cálculo de totais e subtotais
+- Checkout via WhatsApp
+- Armazenamento em localStorage para persistência
+
+✅ SISTEMA DE COMPRA DIRETA:
+- Botão "Comprar Agora" na página do produto
+- Bypass do carrinho para compra imediata
+- Integração com WhatsApp para finalização
+
+✅ SISTEMA DE AVALIAÇÕES:
+- Avaliação de produtos sem necessidade de conta
+- Opção de avaliação anônima ou com nome
+- Formulário de avaliação com estrelas e comentários
+- Armazenamento em localStorage
+
+✅ TROCA DINÂMICA DE IMAGENS:
+- Mudança automática da imagem do produto ao selecionar cores
+- Sistema de mapeamento de cores para imagens
+- Fallback para imagem padrão quando não há imagem específica
+- Feedback visual de seleção de cor/tamanho
+- Desabilitação de opções indisponíveis (sem estoque)
+
+✅ SISTEMA DE FAVORITOS:
+- Hook useFavorites para gerenciar favoritos
+- Armazenamento em localStorage (cookies)
+- Integração na página do produto
+- Feedback visual com toast
+
+✅ SISTEMA DE WHATSAPP:
+- Geração automática de código de pedido
+- Formatação de mensagem para WhatsApp
+- Integração no botão "Comprar Agora"
+- Ordem de serviço completa
+
+✅ SEÇÃO DE RECOMENDAÇÕES:
+- "Recomendados para Você" na página inicial
+- Simulação de histórico de navegação
+- Base preparada para algoritmo de recomendação
+
+✅ PAINEL ADMINISTRATIVO:
+- Dashboard com métricas (faturamento, visitas, pedidos)
+- Sistema de gestão de produtos com códigos únicos
+- Controle de estoque com alertas
+- Gerenciamento de promoções
+- Sistema de criação de conjuntos
+- Interface completa para administração
+
+=== ESTRUTURA TÉCNICA EXPANDIDA ===
+
+🔧 HOOKS CUSTOMIZADOS:
+- useFavorites: Gerenciamento de favoritos com localStorage
+- useCart: Gerenciamento completo do carrinho de compras
+- useReviews: Sistema de avaliações para produtos
+
+🛠️ UTILITÁRIOS:
+- whatsapp.ts: Sistema completo de geração de pedidos
+  - Formatação de mensagens automática para pedidos diretos e carrinho
+  - Adição de detalhes do cliente (nome, endereço)
+  - Cálculo de total e frete
+  - Geração de códigos únicos de produto e pedido
+  - Suporte para múltiplos produtos no mesmo pedido
+  - Formatação para melhor visualização no WhatsApp
+
+🎯 SISTEMA DE CÓDIGOS:
+- Formato: ZS-[timestamp]-[random] (ex: ZS-001-TSH)
+- Geração automática para novos produtos
+- Rastreabilidade completa
+
+=== PRÓXIMAS IMPLEMENTAÇÕES SUGERIDAS ===
+
+🔄 BACKEND INTEGRATION:
+- API endpoints para produtos e pedidos
+- Integração real com banco de dados
+- Sistema de autenticação para admin
+- Métricas reais no dashboard
+- Migração dos dados de localStorage para backend
+
+📈 FUNCIONALIDADES AVANÇADAS:
+- Algoritmo real de recomendações baseado em histórico
+- Histórico de pedidos com status de acompanhamento
+- Sistema de cupons de desconto
+- Integração com gateways de pagamento
+- Sincronização multi-dispositivo de carrinho e favoritos
+
+🎯 MELHORIAS UX/UI:
+- Loading states em todas as páginas
+- Animações de transição
+- Estados de erro personalizados
+- Otimização de imagens
+
+=== INSTRUÇÕES PARA MODIFICAÇÕES FUTURAS ===
+
+1. ATUALIZAR ESTE ARQUIVO: Sempre que fizer alterações no código, DEVE atualizar este arquivo
+2. SEMPRE usar o design system definido em index.css
+3. NUNCA usar cores hardcoded - sempre usar tokens semânticos
+4. Manter estrutura de dados consistente para fácil migração para API
+5. Seguir padrão de nomenclatura estabelecido
+6. Componentes devem ser reutilizáveis e modulares
+7. Manter responsividade em todas as modificações
+8. Os sistemas de localStorage (favoritos, carrinho, avaliações) devem ser preparados para migração para API
+9. Códigos de produtos seguem padrão ZS-XXX-YYY para fácil identificação
+10. Documentar novas funcionalidades com detalhes técnicos e exemplos
+11. Organizar código em componentes pequenos e focados em vez de arquivos grandes
+
+=== STATUS DO PROJETO ===
+✅ Frontend completo com todas as funcionalidades principais
+✅ Sistema de favoritos implementado com localStorage
+✅ Sistema de carrinho implementado com localStorage
+✅ Sistema de avaliações implementado com localStorage
+✅ Integração WhatsApp funcional para compra direta e carrinho
+✅ Compartilhamento de produtos via link, WhatsApp e Telegram
+✅ Painel administrativo completo
+✅ Páginas de Promoções e Conjuntos
+✅ Sistema de recomendações (simulado)
+🟡 Aguardando integração com backend para dados reais
+🟡 Algoritmo de recomendações baseado em IA pendente
+🟡 Sistema de autenticação e contas de usuário pendente
+
+Data da última atualização: 22/07/2025
+Desenvolvido por: Lovable AI Assistant
