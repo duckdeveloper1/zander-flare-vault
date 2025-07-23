@@ -3,6 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ProductForm from "@/components/ProductForm";
+import PromotionForm from "@/components/PromotionForm";
+import SetForm from "@/components/SetForm";
+import { useStore } from "@/contexts/StoreContext";
 import { 
   BarChart3, 
   ShoppingBag, 
@@ -35,49 +40,18 @@ const dashboardData = {
     daily: 342,
     weekly: 2186,
     monthly: 9247
-  },
-  lowStock: [
-    { id: "1", name: "Camiseta Premium Laranja", stock: 3, minStock: 10 },
-    { id: "2", name: "Tênis Casual Branco", stock: 1, minStock: 5 },
-    { id: "3", name: "Calça Jeans Premium", stock: 5, minStock: 15 }
-  ]
+  }
 };
 
-const products = [
-  {
-    id: "ZS-001-TSH",
-    name: "Camiseta Premium Laranja",
-    category: "Camisetas",
-    price: 79.90,
-    stock: 25,
-    status: "active",
-    featured: true,
-    promotion: { active: true, discount: 20 }
-  },
-  {
-    id: "ZS-002-JEA",
-    name: "Calça Jeans Premium",
-    category: "Calças",
-    price: 149.90,
-    stock: 15,
-    status: "active",
-    featured: false,
-    promotion: { active: false, discount: 0 }
-  },
-  {
-    id: "ZS-003-SNK",
-    name: "Tênis Casual Branco",
-    category: "Calçados",
-    price: 199.90,
-    stock: 8,
-    status: "active",
-    featured: true,
-    promotion: { active: true, discount: 25 }
-  }
-];
-
 const Admin = () => {
+  const { products, promotions, sets } = useStore();
   const [selectedTab, setSelectedTab] = useState("dashboard");
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [isPromotionFormOpen, setIsPromotionFormOpen] = useState(false);
+  const [isSetFormOpen, setIsSetFormOpen] = useState(false);
+
+  // Produtos com estoque baixo (menos de 10 unidades)
+  const lowStockProducts = products.filter(product => product.stock < 10);
 
   const StatCard = ({ icon: Icon, title, value, description, color = "primary" }) => (
     <Card>
@@ -187,19 +161,28 @@ const Admin = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {dashboardData.lowStock.map((product) => (
-                      <div key={product.id} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg">
-                        <div>
-                          <p className="font-medium text-sm">{product.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Estoque: {product.stock} (Mín: {product.minStock})
-                          </p>
+                  {lowStockProducts.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      {products.length === 0 
+                        ? "Nenhum produto cadastrado ainda." 
+                        : "Todos os produtos estão com estoque adequado."
+                      }
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {lowStockProducts.map((product) => (
+                        <div key={product.id} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg">
+                          <div>
+                            <p className="font-medium text-sm">{product.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Estoque: {product.stock} unidades
+                            </p>
+                          </div>
+                          <Badge variant="destructive">Baixo</Badge>
                         </div>
-                        <Badge variant="destructive">Baixo</Badge>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -209,7 +192,10 @@ const Admin = () => {
           <TabsContent value="products" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Gerenciar Produtos</h2>
-              <Button className="bg-primary hover:bg-primary-dark text-white">
+              <Button 
+                className="bg-primary hover:bg-primary-dark text-white"
+                onClick={() => setIsProductFormOpen(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Produto
               </Button>
@@ -217,39 +203,53 @@ const Admin = () => {
 
             <Card>
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  {products.map((product) => (
-                    <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold">{product.name}</h3>
-                          <Badge variant="outline">{product.id}</Badge>
-                          {product.featured && (
-                            <Badge className="bg-primary text-white">Destaque</Badge>
-                          )}
-                          {product.promotion.active && (
-                            <Badge variant="secondary">
-                              {product.promotion.discount}% OFF
-                            </Badge>
-                          )}
+                {products.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">Nenhum produto cadastrado</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Comece criando seu primeiro produto para aparecer na loja.
+                    </p>
+                    <Button onClick={() => setIsProductFormOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeiro Produto
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {products.map((product) => (
+                      <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold">{product.name}</h3>
+                            <Badge variant="outline">{product.id}</Badge>
+                            {product.featured && (
+                              <Badge className="bg-primary text-white">Destaque</Badge>
+                            )}
+                            {product.promotion?.active && (
+                              <Badge variant="secondary">
+                                {product.promotion.discount}% OFF
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>Categoria: {product.category}</span>
+                            <span>Preço: R$ {product.price.toFixed(2)}</span>
+                            <span>Estoque: {product.stock}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>Categoria: {product.category}</span>
-                          <span>Preço: R$ {product.price.toFixed(2)}</span>
-                          <span>Estoque: {product.stock}</span>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -258,57 +258,73 @@ const Admin = () => {
           <TabsContent value="promotions" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Gerenciar Promoções</h2>
-              <Button className="bg-primary hover:bg-primary-dark text-white">
+              <Button 
+                className="bg-primary hover:bg-primary-dark text-white"
+                onClick={() => setIsPromotionFormOpen(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Promoção
               </Button>
             </div>
 
-            <div className="grid gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Promoções Ativas</CardTitle>
-                  <CardDescription>
-                    Gerencie as promoções ativas na loja
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
-                      <div>
-                        <p className="font-medium">Flash Sale - 50% OFF</p>
-                        <p className="text-sm text-muted-foreground">Válida até 31/07/2024</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Badge className="bg-primary text-white">Ativa</Badge>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">Liquidação de Inverno</p>
-                        <p className="text-sm text-muted-foreground">Válida até 15/08/2024</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Badge variant="secondary">Programada</Badge>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Promoções</CardTitle>
+                <CardDescription>
+                  Gerencie as promoções da loja
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {promotions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <TrendingUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">Nenhuma promoção criada</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Crie promoções para atrair mais clientes e aumentar as vendas.
+                    </p>
+                    <Button onClick={() => setIsPromotionFormOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeira Promoção
+                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                ) : (
+                  <div className="space-y-3">
+                    {promotions.map((promotion) => (
+                      <div key={promotion.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <p className="font-medium">{promotion.title}</p>
+                          <p className="text-sm text-muted-foreground">Válida até {new Date(promotion.validUntil).toLocaleDateString()}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge 
+                            className={
+                              promotion.status === 'active' ? 'bg-primary text-white' :
+                              promotion.status === 'scheduled' ? 'bg-secondary' : 'bg-muted'
+                            }
+                          >
+                            {promotion.status === 'active' ? 'Ativa' :
+                             promotion.status === 'scheduled' ? 'Programada' : 'Inativa'}
+                          </Badge>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Conjuntos */}
           <TabsContent value="sets" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Gerenciar Conjuntos</h2>
-              <Button className="bg-primary hover:bg-primary-dark text-white">
+              <Button 
+                className="bg-primary hover:bg-primary-dark text-white"
+                onClick={() => setIsSetFormOpen(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Conjunto
               </Button>
@@ -322,47 +338,71 @@ const Admin = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h3 className="font-semibold">Conjunto Urban Casual</h3>
-                      <p className="text-sm text-muted-foreground">
-                        3 itens • R$ 359,90 • 16% desconto
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Badge className="bg-primary text-white">Ativo</Badge>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                {sets.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">Nenhum conjunto criado</h3>
+                    <p className="text-muted-foreground mb-4">
+                      {products.length === 0 
+                        ? "Crie produtos primeiro para poder formar conjuntos."
+                        : "Crie conjuntos combinando produtos para oferecer descontos especiais."
+                      }
+                    </p>
+                    <Button 
+                      onClick={() => setIsSetFormOpen(true)}
+                      disabled={products.length === 0}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeiro Conjunto
+                    </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h3 className="font-semibold">Conjunto Street Style</h3>
-                      <p className="text-sm text-muted-foreground">
-                        3 itens • R$ 399,90 • 17% desconto
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Badge className="bg-primary text-white">Ativo</Badge>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                ) : (
+                  <div className="space-y-4">
+                    {sets.map((set) => (
+                      <div key={set.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h3 className="font-semibold">{set.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {set.products.length} itens • R$ {set.price.toFixed(2)} • {set.discount.toFixed(0)}% desconto
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge className="bg-primary text-white">Ativo</Badge>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Dialogs dos Formulários */}
+      <Dialog open={isProductFormOpen} onOpenChange={setIsProductFormOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <ProductForm onClose={() => setIsProductFormOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isPromotionFormOpen} onOpenChange={setIsPromotionFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <PromotionForm onClose={() => setIsPromotionFormOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSetFormOpen} onOpenChange={setIsSetFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <SetForm onClose={() => setIsSetFormOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
